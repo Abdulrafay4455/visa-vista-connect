@@ -15,7 +15,7 @@ export function ProfilePage() {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    name: user?.firstName || '',
     email: user?.email || '',
     phone: user?.phone || '+1 (555) 123-4567',
   });
@@ -52,7 +52,7 @@ export function ProfilePage() {
                   </button>
                 </div>
                 <div>
-                  <CardTitle>{user?.name}</CardTitle>
+                  <CardTitle>{user?.firstName}</CardTitle>
                   <CardDescription>{user?.email}</CardDescription>
                 </div>
               </div>
@@ -74,7 +74,7 @@ export function ProfilePage() {
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">First Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                   <Input

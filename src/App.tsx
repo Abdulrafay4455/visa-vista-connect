@@ -16,7 +16,6 @@ import { ApplyVisa } from "./pages/applicant/ApplyVisa";
 import { DocumentsPage } from "./pages/applicant/DocumentsPage";
 import { TrackingPage } from "./pages/applicant/TrackingPage";
 import { NotificationsPage } from "./pages/applicant/NotificationsPage";
-import { SupportPage } from "./pages/applicant/SupportPage";
 import { ProfilePage } from "./pages/applicant/ProfilePage";
 import { ApplicationsPage } from "./pages/consultant/ApplicationsPage";
 import { ReviewPage } from "./pages/consultant/ReviewPage";
@@ -47,7 +46,6 @@ const App = () => (
             <Route path="/applicant/documents" element={<DocumentsPage />} />
             <Route path="/applicant/tracking" element={<TrackingPage />} />
             <Route path="/applicant/notifications" element={<NotificationsPage />} />
-            <Route path="/applicant/support" element={<SupportPage />} />
             <Route path="/applicant/profile" element={<ProfilePage />} />
             
             {/* Consultant routes */}

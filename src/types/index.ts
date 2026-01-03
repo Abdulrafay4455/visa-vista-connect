@@ -1,13 +1,13 @@
 export type UserRole = 'applicant' | 'consultant';
 
 export type ApplicationStatus = 
-  | 'draft'
-  | 'submitted'
-  | 'under_review'
-  | 'documents_requested'
-  | 'sent_to_embassy'
-  | 'approved'
-  | 'rejected';
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'DOCUMENTS_REQUESTED'
+  | 'SENT_TO_EMBASSY'
+  | 'APPROVED'
+  | 'REJECTED';
 
 export type VisaType = 
   | 'tourist'
@@ -19,8 +19,15 @@ export type VisaType =
 
 export interface User {
   id: string;
+  applicantId?: string;
+  consultantId?: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  passportNumber: string;
+  passportExpiry: string;
+  nationality: string;
   role: UserRole;
   avatar?: string;
   phone?: string;

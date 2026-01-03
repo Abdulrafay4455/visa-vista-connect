@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { 
-  FileText, 
-  Clock, 
-  CheckCircle2, 
+import {
+  FileText,
+  Clock,
+  CheckCircle2,
   AlertCircle,
   ArrowRight,
   Plus,
@@ -16,27 +16,29 @@ import { ApplicationTimeline } from '@/components/shared/ApplicationTimeline';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 // Mock data
-const recentApplications = [
-  {
-    id: '1',
-    country: 'United States',
-    flag: '🇺🇸',
-    visaType: 'Tourist',
-    status: 'under_review' as const,
-    submittedAt: new Date('2024-01-15'),
-  },
-  {
-    id: '2',
-    country: 'United Kingdom',
-    flag: '🇬🇧',
-    visaType: 'Business',
-    status: 'sent_to_embassy' as const,
-    submittedAt: new Date('2024-01-10'),
-  },
-];
+// const recentApplications = [
+//   {
+//     id: '1',
+//     country: 'United States',
+//     flag: '🇺🇸',
+//     visaType: 'Tourist',
+//     status: 'under_review' as const,
+//     submittedAt: new Date('2024-01-15'),
+//   },
+//   {
+//     id: '2',
+//     country: 'United Kingdom',
+//     flag: '🇬🇧',
+//     visaType: 'Business',
+//     status: 'sent_to_embassy' as const,
+//     submittedAt: new Date('2024-01-10'),
+//   },
+// ];
 
 const notifications = [
   {
@@ -56,7 +58,9 @@ const notifications = [
 ];
 
 export function ApplicantDashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  const [recentApplications, setRecentApplication] = useState([]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -71,6 +75,28 @@ export function ApplicantDashboard() {
     visible: { opacity: 1, y: 0 },
   };
 
+  useEffect(() => {
+    if (user === null) return
+    const getApplications = async () => {
+      console.log(user)
+      const result = await axios.get(`http://localhost:8081/applications/applicant/${user.applicantId}`);
+      const applications = typeof result.data === "string"
+        ? JSON.parse(result.data)
+        : result.data;
+
+        console.log(applications)
+        console.log(typeof result.data)
+      setRecentApplication(applications);
+      setRecentApplication(applications);
+    }
+    getApplications();
+  }, [user])
+
+  const pendingApp = recentApplications.filter((app) => app.status !== "CLOSED");
+  const approveApp = recentApplications.filter((app) => app.status === "CLOSED");
+  const actionApp = recentApplications.filter((app) => app.status === "DOCUMENT_VERIFICATION" || "PAYMENT_PENDING" ||
+    "APPOINTMENT_SCHEDULED" || "READY_FOR_INTERVIEW");
+
   return (
     <ApplicantLayout>
       <motion.div
@@ -83,7 +109,7 @@ export function ApplicantDashboard() {
         <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold">
-              Welcome back, <span className="text-accent">{user?.name?.split(' ')[0]}</span>
+              Welcome back, <span className="text-accent">{user?.firstName}</span>
             </h1>
             <p className="text-muted-foreground mt-1">
               Track your visa applications and manage documents
@@ -101,25 +127,25 @@ export function ApplicantDashboard() {
         <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Applications"
-            value={3}
+            value={recentApplications.length}
             icon={FileText}
             variant="primary"
           />
           <StatsCard
             title="In Progress"
-            value={2}
+            value={pendingApp.length}
             icon={Clock}
             variant="warning"
           />
           <StatsCard
             title="Approved"
-            value={1}
+            value={approveApp.length}
             icon={CheckCircle2}
             variant="success"
           />
           <StatsCard
             title="Action Required"
-            value={1}
+            value={actionApp.length}
             icon={AlertCircle}
             variant="info"
           />
@@ -188,10 +214,9 @@ export function ApplicantDashboard() {
                     className="p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
-                        notif.type === 'success' ? 'bg-success' :
-                        notif.type === 'warning' ? 'bg-warning' : 'bg-info'
-                      }`} />
+                      <div className={`w-2 h-2 rounded-full mt-2 ${notif.type === 'success' ? 'bg-success' :
+                          notif.type === 'warning' ? 'bg-warning' : 'bg-info'
+                        }`} />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm">{notif.title}</p>
                         <p className="text-xs text-muted-foreground truncate">{notif.message}</p>
@@ -213,11 +238,10 @@ export function ApplicantDashboard() {
               <CardDescription>Common tasks at your fingertips</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {[
                   { label: 'Upload Documents', icon: FileText, path: '/applicant/documents' },
                   { label: 'Track Status', icon: Clock, path: '/applicant/tracking' },
-                  { label: 'Contact Support', icon: Bell, path: '/applicant/support' },
                   { label: 'Edit Profile', icon: CheckCircle2, path: '/applicant/profile' },
                 ].map((action) => (
                   <Link

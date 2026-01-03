@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Globe, Plane, Calendar, DollarSign, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,14 +10,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import axios from 'axios';
 
 const countries = [
   { code: 'US', name: 'United States', flag: '🇺🇸' },
   { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
   { code: 'CA', name: 'Canada', flag: '🇨🇦' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
-  { code: 'DE', name: 'Germany', flag: '🇩🇪' },
-  { code: 'FR', name: 'France', flag: '🇫🇷' },
 ];
 
 const visaTypes = [
@@ -35,6 +35,7 @@ const steps = [
 ];
 
 export function ApplyVisa() {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     country: '',
@@ -42,15 +43,34 @@ export function ApplyVisa() {
     travelDate: '',
     returnDate: '',
     purpose: '',
-    firstName: '',
-    lastName: '',
-    passportNumber: '',
-    dateOfBirth: '',
-    nationality: '',
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    passportNumber: user?.passportNumber,
+    dateOfBirth: user?.dateOfBirth,
+    nationality: user?.nationality,
     occupation: '',
     annualIncome: '',
     fundingSource: '',
   });
+
+  useEffect(() => {
+    if (!user) return
+    setFormData({
+    country: '',
+    visaType: '',
+    travelDate: '',
+    returnDate: '',
+    purpose: '',
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    passportNumber: user?.passportNumber,
+    dateOfBirth: user?.dateOfBirth,
+    nationality: user?.nationality,
+    occupation: '',
+    annualIncome: '',
+    fundingSource: '',
+    })
+  }, [user])
 
   const handleNext = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
@@ -60,9 +80,37 @@ export function ApplyVisa() {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Handle form submission
     console.log('Form submitted:', formData);
+    try {
+      let dataToAdd: any;
+      const res = localStorage.getItem("consultant");
+      console.log(user)
+      if (res) {
+        const consult = JSON.parse(res);
+        const consultId  = consult.consultantId;
+        dataToAdd = {
+          applicantId: user.applicantId,
+          consultantId: consultId,
+          visaType: formData.visaType,
+        }
+      }
+      dataToAdd = {
+        applicantId: user.applicantId,
+        consultantId: 5,
+        visaType: formData.visaType,
+      }
+
+      const result = await axios.post("http://localhost:8081/applications", dataToAdd);
+      const respinse = result.data;
+      console.log(result.data);
+      toast.success("Application Submitted!")
+      setCurrentStep(1);
+    } catch (error) {
+      toast.error("Error Creating Application")
+      console.error(error);
+    }
   };
 
   return (
@@ -251,21 +299,12 @@ export function ApplyVisa() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="nationality">Nationality</Label>
-                    <Select
+                    <Input
+                    id="nationality"
+                    type="text"
                       value={formData.nationality}
-                      onValueChange={(value) => setFormData({ ...formData, nationality: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select nationality" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="US">United States</SelectItem>
-                        <SelectItem value="GB">United Kingdom</SelectItem>
-                        <SelectItem value="CA">Canada</SelectItem>
-                        <SelectItem value="IN">India</SelectItem>
-                        <SelectItem value="CN">China</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="occupation">Occupation</Label>

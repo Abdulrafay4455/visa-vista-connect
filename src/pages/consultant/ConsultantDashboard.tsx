@@ -34,7 +34,7 @@ const recentApplications = [
     country: 'United States',
     flag: '🇺🇸',
     visaType: 'Tourist',
-    status: 'under_review' as const,
+    status: 'UNDER_REVIEW' as const,
     submittedAt: '2024-01-15',
     priority: 'high',
   },
@@ -44,7 +44,7 @@ const recentApplications = [
     country: 'United Kingdom',
     flag: '🇬🇧',
     visaType: 'Business',
-    status: 'submitted' as const,
+    status: 'SUBMITTED' as const,
     submittedAt: '2024-01-14',
     priority: 'normal',
   },
@@ -54,7 +54,7 @@ const recentApplications = [
     country: 'Canada',
     flag: '🇨🇦',
     visaType: 'Student',
-    status: 'sent_to_embassy' as const,
+    status: 'SENT_TO_EMBASSY' as const,
     submittedAt: '2024-01-12',
     priority: 'normal',
   },
@@ -64,7 +64,7 @@ const recentApplications = [
     country: 'Germany',
     flag: '🇩🇪',
     visaType: 'Work',
-    status: 'documents_requested' as const,
+    status: 'DOCUMENTS_REQUESTED' as const,
     submittedAt: '2024-01-10',
     priority: 'urgent',
   },
@@ -104,7 +104,7 @@ export function ConsultantDashboard() {
         <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold">
-              Good morning, <span className="text-accent">{user?.name?.split(' ')[0]}</span>
+              Good morning, <span className="text-accent">{user?.firstName}</span>
             </h1>
             <p className="text-muted-foreground mt-1">
               Here's what needs your attention today
