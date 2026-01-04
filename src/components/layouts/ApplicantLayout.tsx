@@ -29,7 +29,6 @@ const navItems = [
   { icon: Upload, label: 'Documents', path: '/applicant/documents' },
   { icon: Clock, label: 'Track Application', path: '/applicant/tracking' },
   { icon: Bell, label: 'Notifications', path: '/applicant/notifications' },
-  { icon: MessageCircle, label: 'Support', path: '/applicant/support' },
   { icon: User, label: 'Profile', path: '/applicant/profile' },
 ];
 
@@ -95,7 +94,7 @@ export function ApplicantLayout({ children }: ApplicantLayoutProps) {
         <div className="p-4 border-t border-border">
           {!collapsed && user && (
             <div className="mb-3 px-2">
-              <p className="font-medium text-sm truncate">{user.name}</p>
+              <p className="font-medium text-sm truncate">{user.firstName}</p>
               <p className="text-xs text-muted-foreground truncate">{user.email}</p>
             </div>
           )}

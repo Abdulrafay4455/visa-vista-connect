@@ -1,80 +1,63 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { User, UserRole } from '@/types';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import { User } from "@/types";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string, role: UserRole) => Promise<void>;
-  register: (email: string, password: string, name: string, role: UserRole) => Promise<void>;
+  loading: boolean;
+  login: (user: User, token: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demo
-const mockUsers: User[] = [
-  {
-    id: '1',
-    email: 'applicant@demo.com',
-    name: 'John Applicant',
-    role: 'applicant',
-    createdAt: new Date(),
-  },
-  {
-    id: '2',
-    email: 'consultant@demo.com',
-    name: 'Sarah Consultant',
-    role: 'consultant',
-    createdAt: new Date(),
-  },
-];
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = useCallback(async (email: string, password: string, role: UserRole) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const foundUser = mockUsers.find(u => u.email === email && u.role === role);
-    if (foundUser) {
-      setUser(foundUser);
-    } else {
-      // Create a mock user for demo purposes
-      setUser({
-        id: Date.now().toString(),
-        email,
-        name: email.split('@')[0],
-        role,
-        createdAt: new Date(),
-      });
+  // Load session on refresh
+  useEffect(() => {
+    try {
+      const storedUser = sessionStorage.getItem("user");
+      console.log(storedUser)
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch {
+      console.log("No User");
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  const register = useCallback(async (email: string, password: string, name: string, role: UserRole) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setUser({
-      id: Date.now().toString(),
-      email,
-      name,
-      role,
-      createdAt: new Date(),
-    });
+  const login = useCallback((user: User, token: string) => {
+    sessionStorage.setItem("user", JSON.stringify(user));
+    sessionStorage.setItem("token", token);
+    setUser(user);
   }, []);
 
   const logout = useCallback(() => {
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
     setUser(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated: !!user,
-      login,
-      register,
-      logout,
-    }}>
+    <AuthContext.Provider
+      value={{
+        user: user,
+        isAuthenticated: !!user,
+        loading,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -82,8 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 }

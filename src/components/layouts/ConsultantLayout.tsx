@@ -31,7 +31,6 @@ const navItems = [
   { icon: Globe, label: 'Embassy Tracking', path: '/consultant/embassy' },
   { icon: MessageSquare, label: 'Messages', path: '/consultant/messages' },
   { icon: BarChart3, label: 'Reports', path: '/consultant/reports' },
-  { icon: Settings, label: 'Settings', path: '/consultant/settings' },
 ];
 
 export function ConsultantLayout({ children }: ConsultantLayoutProps) {
@@ -96,7 +95,7 @@ export function ConsultantLayout({ children }: ConsultantLayoutProps) {
         <div className="p-4 border-t border-sidebar-border">
           {!collapsed && user && (
             <div className="mb-3 px-2">
-              <p className="font-medium text-sm text-sidebar-foreground truncate">{user.name}</p>
+              <p className="font-medium text-sm text-sidebar-foreground truncate">{user.firstName}</p>
               <p className="text-xs text-sidebar-foreground/60 truncate">{user.email}</p>
             </div>
           )}

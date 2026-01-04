@@ -14,30 +14,30 @@ interface ApplicationTimelineProps {
 }
 
 const timelineSteps: TimelineStep[] = [
-  { status: 'submitted', label: 'Submitted' },
-  { status: 'under_review', label: 'Under Review' },
-  { status: 'sent_to_embassy', label: 'Sent to Embassy' },
-  { status: 'approved', label: 'Decision' },
+  { status: 'SUBMITTED', label: 'Submitted' },
+  { status: 'UNDER_REVIEW', label: 'Under Review' },
+  { status: 'SENT_TO_EMBASSY', label: 'Sent to Embassy' },
+  { status: 'APPROVED', label: 'Decision' },
 ];
 
 const statusOrder: ApplicationStatus[] = [
-  'draft',
-  'submitted',
-  'under_review',
-  'documents_requested',
-  'sent_to_embassy',
-  'approved',
-  'rejected',
+  'DRAFT',
+  'SUBMITTED',
+  'UNDER_REVIEW',
+  'DOCUMENTS_REQUESTED',
+  'SENT_TO_EMBASSY',
+  'APPROVED',
+  'REJECTED',
 ];
 
 export function ApplicationTimeline({ currentStatus, className }: ApplicationTimelineProps) {
   const currentIndex = statusOrder.indexOf(currentStatus);
-  const isRejected = currentStatus === 'rejected';
+  const isRejected = currentStatus === 'REJECTED';
 
   const getStepStatus = (stepStatus: ApplicationStatus) => {
     const stepIndex = statusOrder.indexOf(stepStatus);
     
-    if (isRejected && stepStatus === 'approved') {
+    if (isRejected && stepStatus === 'APPROVED') {
       return 'rejected';
     }
     
@@ -90,7 +90,7 @@ export function ApplicationTimeline({ currentStatus, className }: ApplicationTim
                 status === 'rejected' && 'text-destructive',
                 status === 'pending' && 'text-muted-foreground'
               )}>
-                {step.status === 'approved' && isRejected ? 'Rejected' : step.label}
+                {step.status === 'APPROVED' && isRejected ? 'Rejected' : step.label}
               </span>
             </div>
           );

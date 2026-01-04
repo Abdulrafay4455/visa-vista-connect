@@ -21,37 +21,37 @@ const statusConfig: Record<ApplicationStatus, {
   className: string;
   icon: React.ElementType;
 }> = {
-  draft: {
+  DRAFT: {
     label: 'Draft',
     className: 'bg-muted text-muted-foreground',
     icon: FileText,
   },
-  submitted: {
+  SUBMITTED: {
     label: 'Submitted',
     className: 'bg-info/10 text-info',
     icon: Clock,
   },
-  under_review: {
+  UNDER_REVIEW: {
     label: 'Under Review',
     className: 'bg-warning/10 text-warning',
     icon: FileSearch,
   },
-  documents_requested: {
+  DOCUMENTS_REQUESTED: {
     label: 'Documents Requested',
     className: 'bg-warning/10 text-warning',
     icon: AlertCircle,
   },
-  sent_to_embassy: {
+  SENT_TO_EMBASSY: {
     label: 'Sent to Embassy',
     className: 'bg-info/10 text-info',
     icon: Send,
   },
-  approved: {
+  APPROVED: {
     label: 'Approved',
     className: 'bg-success/10 text-success',
     icon: CheckCircle2,
   },
-  rejected: {
+  REJECTED: {
     label: 'Rejected',
     className: 'bg-destructive/10 text-destructive',
     icon: XCircle,
