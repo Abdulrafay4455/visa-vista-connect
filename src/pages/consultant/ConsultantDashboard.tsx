@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import axios from 'axios';
 import { 
   Users, 
   Clock, 
@@ -17,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { useState,useEffect } from 'react';
 import { 
   Table,
   TableBody,
@@ -27,48 +29,48 @@ import {
 } from '@/components/ui/table';
 
 // Mock data
-const recentApplications = [
-  {
-    id: '1',
-    applicantName: 'John Smith',
-    country: 'United States',
-    flag: '🇺🇸',
-    visaType: 'Tourist',
-    status: 'UNDER_REVIEW' as const,
-    submittedAt: '2024-01-15',
-    priority: 'high',
-  },
-  {
-    id: '2',
-    applicantName: 'Sarah Johnson',
-    country: 'United Kingdom',
-    flag: '🇬🇧',
-    visaType: 'Business',
-    status: 'SUBMITTED' as const,
-    submittedAt: '2024-01-14',
-    priority: 'normal',
-  },
-  {
-    id: '3',
-    applicantName: 'Michael Brown',
-    country: 'Canada',
-    flag: '🇨🇦',
-    visaType: 'Student',
-    status: 'SENT_TO_EMBASSY' as const,
-    submittedAt: '2024-01-12',
-    priority: 'normal',
-  },
-  {
-    id: '4',
-    applicantName: 'Emily Davis',
-    country: 'Germany',
-    flag: '🇩🇪',
-    visaType: 'Work',
-    status: 'DOCUMENTS_REQUESTED' as const,
-    submittedAt: '2024-01-10',
-    priority: 'urgent',
-  },
-];
+// const recentApplications = [
+//   {
+//     id: '1',
+//     applicantName: 'John Smith',
+//     country: 'United States',
+//     flag: '🇺🇸',
+//     visaType: 'Tourist',
+//     status: 'UNDER_REVIEW' as const,
+//     submittedAt: '2024-01-15',
+//     priority: 'high',
+//   },
+//   {
+//     id: '2',
+//     applicantName: 'Sarah Johnson',
+//     country: 'United Kingdom',
+//     flag: '🇬🇧',
+//     visaType: 'Business',
+//     status: 'SUBMITTED' as const,
+//     submittedAt: '2024-01-14',
+//     priority: 'normal',
+//   },
+//   {
+//     id: '3',
+//     applicantName: 'Michael Brown',
+//     country: 'Canada',
+//     flag: '🇨🇦',
+//     visaType: 'Student',
+//     status: 'SENT_TO_EMBASSY' as const,
+//     submittedAt: '2024-01-12',
+//     priority: 'normal',
+//   },
+//   {
+//     id: '4',
+//     applicantName: 'Emily Davis',
+//     country: 'Germany',
+//     flag: '🇩🇪',
+//     visaType: 'Work',
+//     status: 'DOCUMENTS_REQUESTED' as const,
+//     submittedAt: '2024-01-10',
+//     priority: 'urgent',
+//   },
+// ];
 
 const urgentActions = [
   { id: '1', message: '3 applications pending document review', type: 'warning' },
@@ -78,6 +80,21 @@ const urgentActions = [
 
 export function ConsultantDashboard() {
   const { user } = useAuth();
+  const [recentApplications, setRecentApplications] = useState([]);
+
+  useEffect(() => {
+    // Fetch recent applications from API
+    if (!user) return;
+    const fetchRecentApplications = async () => {
+      const result = await axios.get('http://localhost:8081/applications/consultant/' + user.consultantId);
+      setRecentApplications(result.data);
+      console.log(result.data);
+    };
+
+    fetchRecentApplications();
+  }, [user]);
+    
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -92,6 +109,9 @@ export function ConsultantDashboard() {
     visible: { opacity: 1, y: 0 },
   };
 
+  const pendingApp = recentApplications.filter((app) => app.status !== "CLOSED");
+  const approveApp = recentApplications.filter((app) => app.status === "CLOSED");
+  const actionApp = recentApplications.filter((app) => app.status === "SENT_TO_EMBASSY");
   return (
     <ConsultantLayout>
       <motion.div
@@ -130,27 +150,27 @@ export function ConsultantDashboard() {
         <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Applications"
-            value={156}
+            value={recentApplications.length}
             icon={Users}
             variant="primary"
             trend={{ value: 12, isPositive: true }}
           />
           <StatsCard
             title="Pending Review"
-            value={24}
+            value={pendingApp.length}
             icon={Clock}
             variant="warning"
           />
           <StatsCard
             title="Approved This Month"
-            value={38}
+            value={approveApp.length}
             icon={CheckCircle2}
             variant="success"
             trend={{ value: 8, isPositive: true }}
           />
           <StatsCard
             title="At Embassy"
-            value={15}
+            value={actionApp.length}
             icon={Globe}
             variant="info"
           />
@@ -216,7 +236,7 @@ export function ConsultantDashboard() {
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                               <span className="text-sm font-medium text-primary">
-                                {app.applicantName.split(' ').map(n => n[0]).join('')}
+                                {/* {app.applicantName.split(' ').map(n => n[0]).join('')} */}
                               </span>
                             </div>
                             <div>
@@ -306,3 +326,4 @@ export function ConsultantDashboard() {
     </ConsultantLayout>
   );
 }
+

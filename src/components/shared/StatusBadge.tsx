@@ -56,6 +56,11 @@ const statusConfig: Record<ApplicationStatus, {
     className: 'bg-destructive/10 text-destructive',
     icon: XCircle,
   },
+  CLOSED: {
+    label: 'Closed',
+    className: 'bg-destructive/10 text-destructive',
+    icon: XCircle,
+  },
 };
 
 export function StatusBadge({ status, size = 'md', showIcon = true }: StatusBadgeProps) {

@@ -36,6 +36,7 @@ const steps = [
 
 export function ApplyVisa() {
   const { user } = useAuth();
+  console.log(user);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     country: '',
@@ -70,7 +71,8 @@ export function ApplyVisa() {
     annualIncome: '',
     fundingSource: '',
     })
-  }, [user])
+    console.log(user);
+    }, [user])
 
   const handleNext = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
@@ -98,7 +100,7 @@ export function ApplyVisa() {
       }
       dataToAdd = {
         applicantId: user.applicantId,
-        consultantId: 5,
+        consultantId: 1,
         visaType: formData.visaType,
       }
 

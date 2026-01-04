@@ -7,7 +7,8 @@ export type ApplicationStatus =
   | 'DOCUMENTS_REQUESTED'
   | 'SENT_TO_EMBASSY'
   | 'APPROVED'
-  | 'REJECTED';
+  | 'REJECTED'
+  | 'CLOSED';
 
 export type VisaType = 
   | 'tourist'
